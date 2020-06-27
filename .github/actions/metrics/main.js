@@ -3,52 +3,60 @@ const github = require("@actions/github");
 const core = require("@actions/core");
 
 
+const COLLECTION = 'metrics';
+
 const dbName = 'actions';
 const cluster = 'cluster0-8pgr7.mongodb.net';
 const config = 'retryWrites=true&w=majority';
 const pwd = core.getInput("mongo-password")
-
 const uri = `mongodb+srv://Admin:${pwd}@${cluster}/${dbName}?${config}`;
-const COLLECTION = 'metrics';
-
-const CREATE = 'CREATE';
-const PUSH = 'PUSH';
-const PULL = 'PULL';
-const MERGE = 'MERGE';
-const hooks = [ CREATE, PUSH, PULL, MERGE ]
-
 
 async function run() {
     try {
+        console.log('Keys: ', Object.keys(github.context))
+
         console.log('Context: ', github.context);
         console.log('Repo: ', github.context.repo);
+        console.log('Payload: ', github.context.payload)
+        console.log('Commits: ', github.context.payload.commits);
 
-        console.log('URI: ', uri)
-        const hook = github.context.event;
+        const repository = github.context.repo.repo;
+        const branch = github.context.ref.replace('refs/heads/', '');
+        const author = github.context.actor;
+        const owner = github.context.repo.owner;
+        const commit = github.context.payload.head_commit || ''
+        const message = commit.message;
+
+        const isNewBranch = github.context.payload.created;
+        const isPullRequest = github.context.pull_request;
+
         const client = new MongoClient(uri, { useNewUrlParser: true });
         client.connect(_ => {
             const collection = client.db(dbName).collection(COLLECTION);
             collection.insertOne({
-                repository: 'Repo',
-                branch: 'Master',
-                hook: 'Test',
+                repository: repository,
+                author: author,
+                branch: branch,
+                created: isNewBranch,
+                pull_request: isPullRequest || false,
                 time: new Date()
             })
 
             client.close();
         });
 
-        if (hook === CREATE ){
-            const issueTitle = "Provisional Title.";
-            const jokeBody = "Provisional Body.";
+        if (isNewBranch){
+            const title = branch;
+            const body = `Opened by ${author}, with message : ${message}`;
+
             const token = core.getInput("repo-token");
             const octokit = github.getOctokit(token);
     
             await octokit.issues.create({
-                repo: github.context.repo.repo,
-                owner: github.context.repo.owner,
-                title: issueTitle,
-                body: jokeBody
+                repo: repository,
+                owner: owner,
+                title: title,
+                body: body
             });    
         }
     } catch (err) {

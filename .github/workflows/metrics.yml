@@ -1,9 +1,7 @@
 name: JS Actions
 
 on:
-  create:
-  push:
-  pull_request:
+  push
 
 jobs:
   collect-metrics:
