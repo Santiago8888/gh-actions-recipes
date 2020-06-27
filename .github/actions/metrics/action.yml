@@ -1,0 +1,13 @@
+name: "GitMetrics"
+
+description: "Collect lifecycle metrics from a Git branch."
+
+runs:
+  using: "node12"
+  main: "main.js"
+
+
+inputs:
+  password:
+    description: "Required to connect to MongoDB"
+    required: true

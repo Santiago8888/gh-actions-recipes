@@ -1,0 +1,20 @@
+name: JS Actions
+
+on:
+  create:
+  push:
+  pull_request:
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: collect-metrics
+        uses: ./.github/actions/metrics
+        with:
+          hook: "CREATE"
+          repo-token: ${{secrets.GITHUB_TOKEN}}
+          mongo-password: ${{secrets.MONGO_PWD}}

@@ -1,0 +1,17 @@
+{
+  "name": "metrics",
+  "version": "1.0.0",
+  "description": "Collect lifecycle metrics from a Git branch.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "mongodb": "^3.5.9"
+  },
+  "repository": "https://github.com/Santiago8888/gh-actions-recipes"
+}
