@@ -21,6 +21,8 @@ const hooks = [ CREATE, PUSH, PULL, MERGE ]
 
 async function run() {
     try {
+        console.log('Context: ', github.context);
+
         const hook = github.context.event;
         client.connect(_ => {
             const collection = client.db(dbName).collection(COLLECTION);
