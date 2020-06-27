@@ -9,7 +9,6 @@ const config = 'retryWrites=true&w=majority';
 const pwd = core.getInput("mongo-password")
 
 const uri = `mongodb+srv://Admin:${pwd}@${cluster}/${dbName}?${config}`;
-const client = new MongoClient(uri, { useNewUrlParser: true });
 const COLLECTION = 'metrics';
 
 const CREATE = 'CREATE';
@@ -22,14 +21,17 @@ const hooks = [ CREATE, PUSH, PULL, MERGE ]
 async function run() {
     try {
         console.log('Context: ', github.context);
+        console.log('Repo: ', github.context.repo);
 
+        console.log('URI: ', uri)
         const hook = github.context.event;
+        const client = new MongoClient(uri, { useNewUrlParser: true });
         client.connect(_ => {
             const collection = client.db(dbName).collection(COLLECTION);
             collection.insertOne({
-                repository: github.context.repository,
-                branch: github.context.ref,
-                hook: github.context.event,
+                repository: 'Repo',
+                branch: 'Master',
+                hook: 'Test',
                 time: new Date()
             })
 

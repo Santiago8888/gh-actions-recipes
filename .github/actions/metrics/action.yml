@@ -8,6 +8,6 @@ runs:
 
 
 inputs:
-  password:
+  mongo-password:
     description: "Required to connect to MongoDB"
     required: true

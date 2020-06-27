@@ -15,6 +15,5 @@ jobs:
       - name: collect-metrics
         uses: ./.github/actions/metrics
         with:
-          hook: "CREATE"
           repo-token: ${{secrets.GITHUB_TOKEN}}
           mongo-password: ${{secrets.MONGO_PWD}}
