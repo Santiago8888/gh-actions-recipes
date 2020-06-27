@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@actions/core": "^1.2.4",
+    "@actions/github": "^4.0.0",
     "mongodb": "^3.5.9"
   },
   "repository": "https://github.com/Santiago8888/gh-actions-recipes"
