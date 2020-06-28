@@ -2,7 +2,8 @@ const MongoClient = require('mongodb').MongoClient;
 const github = require("@actions/github");
 const core = require("@actions/core");
 
-
+const OPENED = 'opened';
+const CLOSED = 'closed';
 const COLLECTION = 'metrics';
 
 const dbName = 'actions';
@@ -10,29 +11,33 @@ const cluster = 'cluster0-8pgr7.mongodb.net';
 const config = 'retryWrites=true&w=majority';
 const pwd = core.getInput("mongo-password")
 const uri = `mongodb+srv://Admin:${pwd}@${cluster}/${dbName}?${config}`;
+const TOKEN = "repo-token"
 
+const refPrefix = 'refs/heads/'
 async function run() {
     try {
         console.log('Context: ', github.context);
-        console.log('Context: ', github.context.payload.pull_request);
-
+        // console.log('Pull Request: ', github.context.payload.pull_request);
         // console.log('Keys: ', Object.keys(github.context))
         // console.log('Repo: ', github.context.repo);
         // console.log('Payload: ', github.context.payload)
         // console.log('Commits: ', github.context.payload.commits);
 
         const repository = github.context.repo.repo;
-        const branch = github.context.ref.replace('refs/heads/', '');
+        const branch = github.context.ref.replace(refPrefix, '');
         const author = github.context.actor;
         const owner = github.context.repo.owner;
+
+        const action = github.context.payload.action
+        const pull_request = github.context.payload.pull_request || {}
         const commit = github.context.payload.head_commit || {}
-        const message = commit.message;
+        // const message = commit.message || '';
 
         const issue = github.context.payload.number || null;
         const isNewBranch = github.context.payload.created || false;
-        const isOpened = github.context.payload.action === 'opened' || false;
-        const isClosed = github.context.payload.action === 'closed';
-        const isMerged = isClosed && github.context.payload.pull_request.merged;
+        const isOpened = action === OPENED || false;
+        const isClosed = action === CLOSED;
+        const isMerged = isClosed && pull_request.merged;
 
         const client = new MongoClient(uri, { useNewUrlParser: true });
         client.connect(_ => {
@@ -49,14 +54,13 @@ async function run() {
 
             console.log('Record: ', record);
             collection.insertOne(record);
-
             client.close();
         });
 
         if (isMerged){
-            const token = core.getInput("repo-token");
+            const token = core.getInput(TOKEN);
             const octokit = github.getOctokit(token);
-            const body = `Closed by ${author}, with message : ${message}`;
+            const body = `Closed by ${author}`;
     
             await octokit.issues.createComment({
                 repo: repository,
