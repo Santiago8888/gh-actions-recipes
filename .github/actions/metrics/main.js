@@ -13,12 +13,11 @@ const uri = `mongodb+srv://Admin:${pwd}@${cluster}/${dbName}?${config}`;
 
 async function run() {
     try {
-        console.log('Keys: ', Object.keys(github.context))
-
         console.log('Context: ', github.context);
-        console.log('Repo: ', github.context.repo);
-        console.log('Payload: ', github.context.payload)
-        console.log('Commits: ', github.context.payload.commits);
+        // console.log('Keys: ', Object.keys(github.context))
+        // console.log('Repo: ', github.context.repo);
+        // console.log('Payload: ', github.context.payload)
+        // console.log('Commits: ', github.context.payload.commits);
 
         const repository = github.context.repo.repo;
         const branch = github.context.ref.replace('refs/heads/', '');
@@ -28,7 +27,7 @@ async function run() {
         const message = commit.message;
 
         const isNewBranch = github.context.payload.created;
-        const isPullRequest = github.context.pull_request;
+        const isPullRequest = github.context.pull_request || false;
 
         const client = new MongoClient(uri, { useNewUrlParser: true });
         client.connect(_ => {
@@ -38,7 +37,7 @@ async function run() {
                 author: author,
                 branch: branch,
                 created: isNewBranch,
-                pull_request: isPullRequest || false,
+                pull_request: isPullRequest,
                 time: new Date()
             })
 
