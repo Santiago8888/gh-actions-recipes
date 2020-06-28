@@ -40,8 +40,6 @@ async function run() {
         const isMerged = isClosed && pull_request.merged;
 
         const client = await MongoClient.connect(uri, { useNewUrlParser: true })
-        await client.connect()
-
         const collection = client.db(dbName).collection(COLLECTION);
         const record = {
             repository: repository,
@@ -76,6 +74,7 @@ async function run() {
     } catch (err) {
         core.setFailed(err.message);
     }
+
     console.log('Finished')
     return
 }
