@@ -57,44 +57,51 @@ async function run() {
         console.log('Record: ', record);
         collection.insertOne(record);
 
+        // if (isMerged){
         if (isMerged){
+            const events = await collection.find({branch}).toArray();
+            const createEvent = events.find(({ is_created }) => is_created) || {};
+            const openEvent = events.find(({ is_opened }) => is_opened) || {};
+            console.log('Events: ', events);
+    
+            const now = moment(new Date());
+            const createTime = moment(createEvent.time);
+            const openTime = moment(openEvent.time);
+    
+            const timeToOpen = moment.duration(openTime.diff(createTime)).humanize();
+            const timeOpen = moment.duration(now.diff(openTime)).humanize();
+            const timeToMerge = moment.duration(now.diff(createTime)).humanize();
+    
+            const commitsToOpen = events.filter(({ time }) => time < openTime).length;
+            const commitsWhileOpen = events.filter(({ time }) => time > openTime).length;
+            const totalEvents = events.length;
+    
+            console.log('Time To Open', timeToOpen);
+            console.log('Time Open', timeOpen);
+            console.log('Time To Merge', timeToMerge);
+
+            console.log('Commits To Open', commitsToOpen);
+            console.log('Commits While Open', commitsWhileOpen);
+            console.log('Total Events', totalEvents);
+
+
             const token = core.getInput(TOKEN);
             const octokit = github.getOctokit(token);
-            const body = `Closed by ${author}`;
-    
+            const title = `**Pull Request Metrics:** \n`;
+            const timeMetrics = `Time To Open: ${timeToOpen}\n Time Open: ${timeOpen}\n Time To Merge: ${timeToMerge}\n\n`
+            const counterMetrics = `Commits To Open: ${commitsToOpen}\n Commits While Open: ${commitsWhileOpen}\n Total Events: ${totalEvents}\n\n`
+            const body = `${title} ${timeMetrics} ${counterMetrics}`
+
             await octokit.issues.createComment({
                 repo: repository,
                 owner: owner,
-                issue_number: issue,
+                // issue_number: issue,
+                issue_number: 6,
                 body: body
             });
         }
 
-        const events = await collection.find({branch}).toArray();
-        const createEvent = events.find(({ is_created }) => is_created) || {};
-        const openEvent = events.find(({ is_opened }) => is_opened) || {};
-        console.log('Events: ', events);
 
-        const now = moment(new Date());
-        const createTime = moment(createEvent.time);
-        const openTime = moment(openEvent.time);
-
-        const timeToOpen = moment.duration(openTime.diff(createTime)).humanize();
-        const timeOpen = moment.duration(now.diff(openTime)).humanize();
-        const timeToMerge = moment.duration(now.diff(createTime)).humanize();
-
-        const commitsToOpen = events.filter(({ time }) => time < openTime);
-        const commitsWhileOpen = events.filter(({ time }) => time > openTime);
-        const totalEvents = events.length;
-
-        console.log(
-            'Time To Open', timeToOpen,
-            'Time Open', timeOpen,
-            'Time To Merge', timeToMerge,
-            'Commits To Open', commitsToOpen,
-            'Commits While Open', commitsWhileOpen,
-            'Total Events', totalEvents
-        )
         client.close();
     } catch (err) {
         console.error(err);
