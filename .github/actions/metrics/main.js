@@ -58,7 +58,7 @@ async function run() {
         collection.insertOne(record);
 
         // if (isMerged){
-        if (isMerged){
+        if (true){
             const events = await collection.find({branch}).toArray();
             const createEvent = events.find(({ is_created }) => is_created) || {};
             const openEvent = events.find(({ is_opened }) => is_opened) || {};
@@ -88,9 +88,10 @@ async function run() {
             const token = core.getInput(TOKEN);
             const octokit = github.getOctokit(token);
             const title = `**Pull Request Metrics:** \n`;
-            const timeMetrics = `Time To Open: ${timeToOpen}\n Time Open: ${timeOpen}\n Time To Merge: ${timeToMerge}\n\n`
-            const counterMetrics = `Commits To Open: ${commitsToOpen}\n Commits While Open: ${commitsWhileOpen}\n Total Events: ${totalEvents}\n\n`
-            const body = `${title} ${timeMetrics} ${counterMetrics}`
+            const timeMetrics = `Time To Open: ${timeToOpen}\n Time Open: ${timeOpen}\n Time To Merge: ${timeToMerge}\n\n`;
+            const counterMetrics = `Commits To Open: ${commitsToOpen}\n Commits While Open: ${commitsWhileOpen}\n Total Events: ${totalEvents}\n\n`;
+            const body = `${title} ${timeMetrics} ${counterMetrics}`;
+            console.log('Body: ', body);
 
             await octokit.issues.createComment({
                 repo: repository,
