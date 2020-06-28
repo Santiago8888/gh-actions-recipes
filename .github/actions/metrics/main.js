@@ -70,11 +70,14 @@ async function run() {
             });
         }
 
-        const now = new Date();
         const events = await collection.find({branch}).toArray();
-        const createTime = (events.find(({ is_created }) => is_created) || {}).time;
-        const openTime = (events.find(({ is_opened }) => is_opened) || {}).time;
+        const createEvent = events.find(({ is_created }) => is_created) || {};
+        const openEvent = events.find(({ is_opened }) => is_opened) || {};
         console.log('Events: ', events);
+
+        const now = moment(new Date());
+        const createTime = moment(createEvent.time);
+        const openTime = moment(openEvent.time);
 
         const timeToOpen = moment.duration(openTime.diff(createTime)).humanize();
         const timeOpen = moment.duration(now.diff(openTime)).humanize();
@@ -94,6 +97,7 @@ async function run() {
         )
         client.close();
     } catch (err) {
+        console.error(err);
         core.setFailed(err.message);
     }
 }
