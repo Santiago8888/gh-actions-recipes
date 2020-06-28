@@ -39,23 +39,22 @@ async function run() {
         const isClosed = action === CLOSED;
         const isMerged = isClosed && pull_request.merged;
 
-        const client = new MongoClient(uri, { useNewUrlParser: true });
-        client.connect(_ => {
-            const collection = client.db(dbName).collection(COLLECTION);
-            const record = {
-                repository: repository,
-                author: author,
-                branch: branch,
-                is_created: isNewBranch,
-                is_opened: isOpened,
-                is_merged: isMerged,
-                time: new Date()
-            }
+        const client = await MongoClient.connect(uri, { useNewUrlParser: true })
+        await client.connect()
 
-            console.log('Record: ', record);
-            collection.insertOne(record);
-            client.close();
-        });
+        const collection = client.db(dbName).collection(COLLECTION);
+        const record = {
+            repository: repository,
+            author: author,
+            branch: branch,
+            is_created: isNewBranch,
+            is_opened: isOpened,
+            is_merged: isMerged,
+            time: new Date()
+        }
+
+        console.log('Record: ', record);
+        collection.insertOne(record);
 
         if (isMerged){
             const token = core.getInput(TOKEN);
@@ -69,6 +68,10 @@ async function run() {
                 body: body
             });
         }
+
+        const events = await collection.find({branch}).toArray()
+        console.log('Events: ', events)
+        await client.close();
     } catch (err) {
         core.setFailed(err.message);
     }

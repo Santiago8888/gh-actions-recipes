@@ -20,8 +20,8 @@ Acceptance Tests:
 6. Write request on merge. (Done)
 7. Create issue on branch create. (Done)
 8. Request metrics on merge. ()
-9. Write metrics on merge. ()
-10. Close issue on merge. ()
+9. Write metrics on merge. (Done)
+10. Close issue on merge. (Done)
 
 
 Data Model (MVP): {
