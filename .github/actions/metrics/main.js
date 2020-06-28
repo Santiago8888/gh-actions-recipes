@@ -14,6 +14,8 @@ const uri = `mongodb+srv://Admin:${pwd}@${cluster}/${dbName}?${config}`;
 async function run() {
     try {
         console.log('Context: ', github.context);
+        console.log('Context: ', github.context.payload.pull_request);
+
         // console.log('Keys: ', Object.keys(github.context))
         // console.log('Repo: ', github.context.repo);
         // console.log('Payload: ', github.context.payload)
@@ -26,25 +28,33 @@ async function run() {
         const commit = github.context.payload.head_commit || ''
         const message = commit.message;
 
-        const isNewBranch = github.context.payload.created;
-        const isPullRequest = github.context.pull_request || false;
+        const issue = github.context.payload.number || null;
+        console.log('Issue: ', issue);
+
+        const isNewBranch = github.context.payload.created || false;
+        const isOpened = github.context.action === 'opened' || false;
+        const isPullRequest = github.context.eventName === 'pull_request' || false;
 
         const client = new MongoClient(uri, { useNewUrlParser: true });
         client.connect(_ => {
             const collection = client.db(dbName).collection(COLLECTION);
-            collection.insertOne({
+            const record = {
                 repository: repository,
                 author: author,
                 branch: branch,
-                created: isNewBranch,
-                pull_request: isPullRequest,
+                is_created: isNewBranch,
+                is_opened: isOpened,
+                is_pull_request: isPullRequest,
                 time: new Date()
-            })
+            }
+
+            console.log('Record: ', record);
+            collection.insertOne(record);
 
             client.close();
         });
 
-        if (isNewBranch){
+        if (isNewBranch && isPullRequest){
             const title = branch;
             const body = `Opened by ${author}, with message : ${message}`;
 
@@ -56,7 +66,7 @@ async function run() {
                 owner: owner,
                 title: title,
                 body: body
-            });    
+            });
         }
     } catch (err) {
         core.setFailed(err.message);
