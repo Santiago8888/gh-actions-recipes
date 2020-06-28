@@ -58,8 +58,7 @@ async function run() {
         console.log('Record: ', record);
         collection.insertOne(record);
 
-//        if (isMerged){
-        if (true){
+        if (isMerged){
             const events = await collection.find({branch}).toArray();
             const createEvent = events.find(({ is_created }) => is_created) || {};
             const openEvent = events.find(({ is_opened }) => is_opened) || {};
@@ -99,8 +98,7 @@ async function run() {
             await octokit.issues.createComment({
                 repo: repository,
                 owner: owner,
-                issue_number: 6,
-                // issue_number: issue,
+                issue_number: issue,
                 body: body
             });
         }
