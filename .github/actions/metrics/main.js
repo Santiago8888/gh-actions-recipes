@@ -13,12 +13,13 @@ const uri = `mongodb+srv://Admin:${pwd}@${cluster}/${dbName}?${config}`;
 
 async function run() {
     try {
-        console.log('Keys: ', Object.keys(github.context))
-
         console.log('Context: ', github.context);
-        console.log('Repo: ', github.context.repo);
-        console.log('Payload: ', github.context.payload)
-        console.log('Commits: ', github.context.payload.commits);
+        console.log('Context: ', github.context.payload.pull_request);
+
+        // console.log('Keys: ', Object.keys(github.context))
+        // console.log('Repo: ', github.context.repo);
+        // console.log('Payload: ', github.context.payload)
+        // console.log('Commits: ', github.context.payload.commits);
 
         const repository = github.context.repo.repo;
         const branch = github.context.ref.replace('refs/heads/', '');
@@ -27,25 +28,31 @@ async function run() {
         const commit = github.context.payload.head_commit || ''
         const message = commit.message;
 
-        const isNewBranch = github.context.payload.created;
-        const isPullRequest = github.context.pull_request;
+        const issue = github.context.payload.number || null;
+        console.log('Issue: ', issue);
+
+        const isNewBranch = github.context.payload.created || false;
+        const isOpened = github.context.action === 'opened' || false;
 
         const client = new MongoClient(uri, { useNewUrlParser: true });
         client.connect(_ => {
             const collection = client.db(dbName).collection(COLLECTION);
-            collection.insertOne({
+            const record = {
                 repository: repository,
                 author: author,
                 branch: branch,
-                created: isNewBranch,
-                pull_request: isPullRequest || false,
+                is_created: isNewBranch,
+                is_opened: isOpened,
                 time: new Date()
-            })
+            }
+
+            console.log('Record: ', record);
+            collection.insertOne(record);
 
             client.close();
         });
 
-        if (isNewBranch){
+        if (isNewBranch && isOpened){
             const title = branch;
             const body = `Opened by ${author}, with message : ${message}`;
 
@@ -57,7 +64,7 @@ async function run() {
                 owner: owner,
                 title: title,
                 body: body
-            });    
+            });
         }
     } catch (err) {
         core.setFailed(err.message);

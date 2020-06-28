@@ -24,12 +24,11 @@ Acceptance Tests:
 10. Close issue on merge. ()
 
 
-Data Model (MVP):
-{
+Data Model (MVP): {
     id: <uuid>,
     branch: <string>,
     hook: <enum> (create|push|pull_request|merge),
-    time: <date>    
+    time: <date>
 }
 
 
@@ -49,3 +48,11 @@ https://octokit.github.io/rest.js/v18#actions # Get a reference
 
 On master exclude when pushing:
 https://stackoverflow.com/a/57903434
+
+
+TODO:
+1. Split words on issue title & capitalize.
+2. Format issue body: add link to author & new line.
+3. Create metrics label & attach to issue.
+
+4. Implement strategy when switching branches.

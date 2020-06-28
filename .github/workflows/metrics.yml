@@ -1,15 +1,20 @@
-name: JS Actions
+name: Metrics Collector
 
 on:
-  push
+  push:
+    branches-ignore:
+      - master
+    
+  pull_request:
+    types: [opened, closed]
+
 
 jobs:
   collect-metrics:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
-
+      - uses: actions/checkout@v2
       - name: collect-metrics
         uses: ./.github/actions/metrics
         with:
