@@ -1,4 +1,4 @@
-name: JS Actions
+name: Metrics Collector
 
 on:
   push
