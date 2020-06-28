@@ -17,7 +17,7 @@ const refPrefix = 'refs/heads/'
 async function run() {
     try {
         console.log('Context: ', github.context);
-        // console.log('Pull Request: ', github.context.payload.pull_request);
+        console.log('Pull Request: ', github.context.payload.pull_request);
         // console.log('Keys: ', Object.keys(github.context))
         // console.log('Repo: ', github.context.repo);
         // console.log('Payload: ', github.context.payload)
@@ -71,7 +71,7 @@ async function run() {
 
         const events = await collection.find({branch}).toArray()
         console.log('Events: ', events)
-        await client.close();
+        client.close();
     } catch (err) {
         core.setFailed(err.message);
     }
