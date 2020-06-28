@@ -33,7 +33,6 @@ async function run() {
 
         const isNewBranch = github.context.payload.created || false;
         const isOpened = github.context.action === 'opened' || false;
-        const isPullRequest = github.context.eventName === 'pull_request' || false;
 
         const client = new MongoClient(uri, { useNewUrlParser: true });
         client.connect(_ => {
@@ -44,7 +43,6 @@ async function run() {
                 branch: branch,
                 is_created: isNewBranch,
                 is_opened: isOpened,
-                is_pull_request: isPullRequest,
                 time: new Date()
             }
 
@@ -54,7 +52,7 @@ async function run() {
             client.close();
         });
 
-        if (isNewBranch && isPullRequest){
+        if (isNewBranch && isOpened){
             const title = branch;
             const body = `Opened by ${author}, with message : ${message}`;
 
