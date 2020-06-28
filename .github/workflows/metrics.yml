@@ -2,8 +2,8 @@ name: Metrics Collector
 
 on:
   push:
-    branches:
-      - !master
+    branches-ignore:
+      - master
     
   pull_request:
     types: [opened, closed]
