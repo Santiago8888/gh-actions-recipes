@@ -18,7 +18,7 @@ const refPrefix = 'refs/heads/';
 async function run() {
     try {
         console.log('Context: ', github.context);
-        console.log('Pull Request: ', github.context.payload.pull_request);
+        // console.log('Pull Request: ', github.context.payload.pull_request);
         // console.log('Keys: ', Object.keys(github.context))
         // console.log('Repo: ', github.context.repo);
         // console.log('Payload: ', github.context.payload)
@@ -42,6 +42,7 @@ async function run() {
         const isClosed = action === CLOSED;
         const isMerged = isClosed && pull_request.merged;
 
+        // Switch connection outside of try block & use finally.
         const client = await MongoClient.connect(uri, { useNewUrlParser: true });
         const collection = client.db(dbName).collection(COLLECTION);
         const record = {
@@ -98,11 +99,11 @@ async function run() {
             await octokit.issues.createComment({
                 repo: repository,
                 owner: owner,
-                issue_number: issue,
+                issue_number: 6,
+                // issue_number: issue,
                 body: body
             });
         }
-
 
         client.close();
     } catch (err) {
