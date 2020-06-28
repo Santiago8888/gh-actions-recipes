@@ -57,7 +57,7 @@ async function run() {
         console.log('Record: ', record);
         collection.insertOne(record);
 
-        // if (isMerged){
+//        if (isMerged){
         if (true){
             const events = await collection.find({branch}).toArray();
             const createEvent = events.find(({ is_created }) => is_created) || {};
@@ -75,29 +75,30 @@ async function run() {
             const commitsToOpen = events.filter(({ time }) => time < openTime).length;
             const commitsWhileOpen = events.filter(({ time }) => time > openTime).length;
             const totalEvents = events.length;
-    
-            console.log('Time To Open', timeToOpen);
-            console.log('Time Open', timeOpen);
-            console.log('Time To Merge', timeToMerge);
 
-            console.log('Commits To Open', commitsToOpen);
-            console.log('Commits While Open', commitsWhileOpen);
-            console.log('Total Events', totalEvents);
+
+            const title = `**Pull Request Metrics:** \n\n`;
+
+            const timeToOpenMetric = `Time To Open Pull Request: ${timeToOpen}.\n`;
+            const timeOpenMetric = `Duration of Pull Request Opened: ${timeOpen}.\n`;
+            const timeToMergeMetric = `Total Time to Merge Branch: ${timeToMerge}.\n\n`;
+            const timeMetrics = `${timeToOpenMetric}${timeOpenMetric}${timeToMergeMetric}`;
+
+            const commitsToOpenMetric = `Commits To Open Pull Request: ${commitsToOpen}.\n`;
+            const commitsWhileOpenMetric = `Commits While Pull Request was Open: ${commitsWhileOpen}.\n`;
+            const totalEventsMetric = `Total Events to Merge Branch: ${totalEvents}.\n\n`;
+            const counterMetrics = `${commitsToOpenMetric}${commitsWhileOpenMetric}${totalEventsMetric}`;
+
+            const body = `${title} ${timeMetrics} ${counterMetrics}`;
+            console.log('Body: ', body);
 
 
             const token = core.getInput(TOKEN);
             const octokit = github.getOctokit(token);
-            const title = `**Pull Request Metrics:** \n`;
-            const timeMetrics = `Time To Open: ${timeToOpen}\n Time Open: ${timeOpen}\n Time To Merge: ${timeToMerge}\n\n`;
-            const counterMetrics = `Commits To Open: ${commitsToOpen}\n Commits While Open: ${commitsWhileOpen}\n Total Events: ${totalEvents}\n\n`;
-            const body = `${title} ${timeMetrics} ${counterMetrics}`;
-            console.log('Body: ', body);
-
             await octokit.issues.createComment({
                 repo: repository,
                 owner: owner,
-                // issue_number: issue,
-                issue_number: 6,
+                issue_number: issue,
                 body: body
             });
         }
