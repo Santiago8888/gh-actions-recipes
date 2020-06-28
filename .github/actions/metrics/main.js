@@ -25,14 +25,14 @@ async function run() {
         const branch = github.context.ref.replace('refs/heads/', '');
         const author = github.context.actor;
         const owner = github.context.repo.owner;
-        const commit = github.context.payload.head_commit || ''
+        const commit = github.context.payload.head_commit || {}
         const message = commit.message;
 
         const issue = github.context.payload.number || null;
-        console.log('Issue: ', issue);
-
         const isNewBranch = github.context.payload.created || false;
         const isOpened = github.context.action === 'opened' || false;
+        const isClosed = github.context.action === 'closed';
+        const isMerged = isClosed && github.context.payload.pull_request.merged;
 
         const client = new MongoClient(uri, { useNewUrlParser: true });
         client.connect(_ => {
@@ -43,6 +43,7 @@ async function run() {
                 branch: branch,
                 is_created: isNewBranch,
                 is_opened: isOpened,
+                is_merged: isMerged,
                 time: new Date()
             }
 
@@ -52,17 +53,15 @@ async function run() {
             client.close();
         });
 
-        if (isNewBranch && isOpened){
-            const title = branch;
-            const body = `Opened by ${author}, with message : ${message}`;
-
+        if (isMerged){
             const token = core.getInput("repo-token");
             const octokit = github.getOctokit(token);
+            const body = `Closed by ${author}, with message : ${message}`;
     
-            await octokit.issues.create({
+            await octokit.issues.createComment({
                 repo: repository,
                 owner: owner,
-                title: title,
+                issue_number: issue,
                 body: body
             });
         }
