@@ -80,14 +80,14 @@ async function run() {
 
             const title = `**Pull Request Metrics:** \n\n`;
 
-            const timeToOpenMetric = `Time To Open Pull Request: ${timeToOpen}.\n`;
-            const timeOpenMetric = `Duration of Pull Request Opened: ${timeOpen}.\n`;
-            const timeToMergeMetric = `Total Time to Merge Branch: ${timeToMerge}.\n\n`;
+            const timeToOpenMetric = `Time to Open Pull Request: ${timeToOpen}.\n`;
+            const timeOpenMetric = `Time to Merge Pull Request: ${timeOpen}.\n`;
+            const timeToMergeMetric = `**Total Time to Merge Branch**: ${timeToMerge}.\n\n`;
             const timeMetrics = `${timeToOpenMetric}${timeOpenMetric}${timeToMergeMetric}`;
 
-            const commitsToOpenMetric = `Commits To Open Pull Request: ${commitsToOpen}.\n`;
-            const commitsWhileOpenMetric = `Commits While Pull Request was Open: ${commitsWhileOpen}.\n`;
-            const totalEventsMetric = `Total Events to Merge Branch: ${totalEvents}.\n\n`;
+            const commitsToOpenMetric = `Number of Commits to Open Pull Request: ${commitsToOpen}.\n`;
+            const commitsWhileOpenMetric = `No. of Commits while Pull Request was Open: ${commitsWhileOpen}.\n`;
+            const totalEventsMetric = `**Total Events to Merge Branch**: ${totalEvents}.\n\n`;
             const counterMetrics = `${commitsToOpenMetric}${commitsWhileOpenMetric}${totalEventsMetric}`;
 
             const body = `${title} ${timeMetrics} ${counterMetrics}`;
