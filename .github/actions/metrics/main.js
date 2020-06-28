@@ -72,8 +72,10 @@ async function run() {
         const events = await collection.find({branch}).toArray()
         console.log('Events: ', events)
         client.close();
+        return
     } catch (err) {
         core.setFailed(err.message);
+        return
     }
 }
 
