@@ -73,11 +73,11 @@ async function run() {
         console.log('Events: ', events)
         client.close();
         console.log('Closed')
-        return
     } catch (err) {
         core.setFailed(err.message);
-        return
     }
+    console.log('Finished')
+    return
 }
 
 
