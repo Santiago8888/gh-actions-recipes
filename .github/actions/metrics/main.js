@@ -24,16 +24,17 @@ async function run() {
         // console.log('Commits: ', github.context.payload.commits);
 
         const repository = github.context.repo.repo;
-        const branch = github.context.ref.replace(refPrefix, '');
         const author = github.context.actor;
         const owner = github.context.repo.owner;
 
         const action = github.context.payload.action
-        const pull_request = github.context.payload.pull_request || {}
-        if (pull_request) const pulledBranch = pull_request.head.ref
+        const pull_request = github.context.payload.pull_request
+        const branch = pull_request 
+            ? pull_request.head.ref
+            : github.context.ref.replace(refPrefix, '')
+
         // const commit = github.context.payload.head_commit || {}
         // const message = commit.message || '';
-
         const issue = github.context.payload.number || null;
         const isNewBranch = github.context.payload.created || false;
         const isOpened = action === OPENED || false;
@@ -45,7 +46,7 @@ async function run() {
         const record = {
             repository: repository,
             author: author,
-            branch: pull_request ? pulledBranch : branch,
+            branch: branch,
             is_created: isNewBranch,
             is_opened: isOpened,
             is_merged: isMerged,
