@@ -30,7 +30,8 @@ async function run() {
 
         const action = github.context.payload.action
         const pull_request = github.context.payload.pull_request || {}
-        const commit = github.context.payload.head_commit || {}
+        if (pull_request) const pulledBranch = pull_request.head.ref
+        // const commit = github.context.payload.head_commit || {}
         // const message = commit.message || '';
 
         const issue = github.context.payload.number || null;
@@ -44,7 +45,7 @@ async function run() {
         const record = {
             repository: repository,
             author: author,
-            branch: branch,
+            branch: pull_request ? pulledBranch : branch,
             is_created: isNewBranch,
             is_opened: isOpened,
             is_merged: isMerged,
