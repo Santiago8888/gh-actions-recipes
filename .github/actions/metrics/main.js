@@ -30,8 +30,8 @@ async function run() {
 
         const issue = github.context.payload.number || null;
         const isNewBranch = github.context.payload.created || false;
-        const isOpened = github.context.action === 'opened' || false;
-        const isClosed = github.context.action === 'closed';
+        const isOpened = github.context.payload.action === 'opened' || false;
+        const isClosed = github.context.payload.action === 'closed';
         const isMerged = isClosed && github.context.payload.pull_request.merged;
 
         const client = new MongoClient(uri, { useNewUrlParser: true });
