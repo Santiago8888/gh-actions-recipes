@@ -54,3 +54,5 @@ TODO:
 1. Split words on issue title & capitalize.
 2. Format issue body: add link to author & new line.
 3. Create metrics label & attach to issue.
+
+4. Implement strategy when switching branches.

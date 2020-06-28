@@ -2,6 +2,7 @@ name: Metrics Collector
 
 on:
   push
+  pull_request
 
 jobs:
   collect-metrics:
