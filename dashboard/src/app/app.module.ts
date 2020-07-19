@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { RingChartComponent } from './ring-chart/ring-chart.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    RingChartComponent
   ],
   imports: [
     BrowserModule,
