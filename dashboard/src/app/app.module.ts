@@ -8,11 +8,13 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { RingChartComponent } from './ring-chart/ring-chart.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { StackedChartComponent } from './stacked-chart/stacked-chart.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    RingChartComponent
+    RingChartComponent,
+    StackedChartComponent
   ],
   imports: [
     BrowserModule, 

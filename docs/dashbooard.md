@@ -2,11 +2,11 @@
 
 ## Features
 
-- [ ] Ring Chart to highlight proportion of PR vs non-PR.
+- [X] Ring Chart to highlight proportion of PR vs non-PR.
 - [ ] Stacked Chart to Compare multiple branches development time.
 - [ ] Line progression to show history of commits.
 - [ ] Counters on total PRs over defined time intervals.
-- [ ] Export this against other GitHub Repos.
+- [ ] Apply this to other GitHub Repos.
 
 **These answers:**
 * How long a new feature takes to merge?
