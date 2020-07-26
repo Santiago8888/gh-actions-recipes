@@ -10,7 +10,7 @@
 
 ## RoadMap
 
-* Hello World Request.
+* Hello World Request. (Done)
 * Define Strategy to Retrieve Results.
 * Connect to MongoDB Client.
 * Store Results to MongoDB.
