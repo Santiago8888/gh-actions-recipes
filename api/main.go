@@ -1,16 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"context"
+	"fmt"
+
 	"github.com/google/go-github/github"
 )
 
 func main() {
 	ctx := context.Background()
 	client := github.NewClient(nil)
-	orgs, _, _ := client.Organizations.List(ctx, "willnorris", nil)
 
-	fmt.Println(orgs[0].GetAvatarURL())
+	opt := &github.PullRequestListOptions{State: "closed"}
+	prs, _, _ := client.PullRequests.List(ctx, "cypress-io", "cypress", opt)
+
+	fmt.Println(prs)
 }
-
