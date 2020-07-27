@@ -2,11 +2,11 @@
 
 ## Features
 
-- [ ] Get time when Branch was Opened, PR created and Merged.
-- [ ] Get number of commits during each step.
-- [ ] Store results in DB.
-- [ ] Get Activity counts as in total numner of PRs & Merged branches.
-- [ ] Compare across GitHub Repos.
+- [ ] Know how likely a PR is going to be approved.
+- [ ] The approximate time for a PR to be resolved.
+- [ ] An repository activity indicator with trends.
+- [ ] Comparisson of stats across repositories.
+- [ ] An agility score for good practices.
 
 ## RoadMap
 
@@ -31,11 +31,47 @@
 
 ### Tasks
 
-* Define DB Model. ()
+* Define DB Model. (Done)
 * Fetch Closed PRs and Filter relevant Stats. ()
+    * Create Struct. ()
+    * Retrieve Stats. ()
+    * Compute Additionals. ()
+        * Handle time stamps. ()
+    * Instantiate Stats Object. ()
 * Store PR Stats on MongoDB. ()
 * Design GET Queries on Stitch Console. ()
 * Create PR and Document Front End Tasks. ()
+
+### DB Model
+
+#### Collection : *Stats*
+
+```
+"_id": <BSON Object>
+"owner": <string>
+"repository": <string>
+
+"number": <int>,
+"state": <enum> || "closed",
+"merged": <bool>,
+"title": <string>,
+"created_at": <dateTime>,
+"closed_at": <dateTime>,
+"author_association": <enum>,
+
+"assignees_count": <int>,
+"requested_reviewers_count": <int>
+"comments": <int>, 
+"review_comments": <int>,
+"maintainer_can_modify": <bool>,
+"commits": <int>,
+"additions": <int>,
+"deletions": <int>,
+"changed_files": <int>,
+
+"time_diff": <int>,
+"lines_diff": <int>
+```
 
 ## Useful Links
 
