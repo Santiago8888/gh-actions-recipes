@@ -58,18 +58,18 @@
 "created_at": <dateTime>,
 "closed_at": <dateTime>,
 "author_association": <enum>,
+"maintainer_can_modify": <bool>,
 
 "assignees_count": <int>,
 "requested_reviewers_count": <int>
 "comments": <int>, 
 "review_comments": <int>,
-"maintainer_can_modify": <bool>,
 "commits": <int>,
 "additions": <int>,
 "deletions": <int>,
 "changed_files": <int>,
 
-"time_diff": <int>,
+"time_diff": <float>,
 "lines_diff": <int>
 ```
 
