@@ -8,7 +8,7 @@ import (
 	"github.com/google/go-github/github"
 )
 
-type PrStats struct {
+type PrStat struct {
 	// Repo Id
 	owner      string
 	repository string
@@ -48,31 +48,36 @@ func main() {
 	opt := &github.PullRequestListOptions{State: "closed"}
 	prs, _, _ := client.PullRequests.List(ctx, owner, repo, opt)
 
-	pr := prs[0]
-	prStat := &PrStats{}
+	prStats := make([]PrStat, len(prs))
+	for i, pr := range prs {
+		prStat := &PrStat{}
 
-	prStat.repository = repo
-	prStat.owner = owner
+		prStat.repository = repo
+		prStat.owner = owner
 
-	prStat.number = pr.GetNumber()
-	prStat.state = pr.GetState()
-	prStat.merged = pr.GetMerged()
-	prStat.title = pr.GetTitle()
-	prStat.created_at = pr.GetCreatedAt()
-	prStat.closed_at = pr.GetClosedAt()
-	prStat.author_association = pr.GetAuthorAssociation()
-	prStat.maintainer_can_modify = pr.GetMaintainerCanModify()
+		prStat.number = pr.GetNumber()
+		prStat.state = pr.GetState()
+		prStat.merged = pr.GetMerged()
+		prStat.title = pr.GetTitle()
+		prStat.created_at = pr.GetCreatedAt()
+		prStat.closed_at = pr.GetClosedAt()
+		prStat.author_association = pr.GetAuthorAssociation()
+		prStat.maintainer_can_modify = pr.GetMaintainerCanModify()
 
-	prStat.assignees_count = len(pr.Assignees)
-	prStat.requested_reviewers_count = len(pr.RequestedReviewers)
-	prStat.comments = pr.GetComments()
-	prStat.review_comments = pr.GetReviewComments()
-	prStat.commits = pr.GetCommits()
-	prStat.additions = pr.GetAdditions()
-	prStat.deletions = pr.GetDeletions()
+		prStat.assignees_count = len(pr.Assignees)
+		prStat.requested_reviewers_count = len(pr.RequestedReviewers)
+		prStat.comments = pr.GetComments()
+		prStat.review_comments = pr.GetReviewComments()
+		prStat.commits = pr.GetCommits()
+		prStat.additions = pr.GetAdditions()
+		prStat.deletions = pr.GetDeletions()
 
-	prStat.time_diff = prStat.closed_at.Sub(prStat.created_at).Hours()
-	prStat.lines_diff = prStat.additions - prStat.deletions
+		prStat.time_diff = prStat.closed_at.Sub(prStat.created_at).Hours()
+		prStat.lines_diff = prStat.additions - prStat.deletions
 
-	fmt.Println(prStat)
+		prStats[i] = *prStat
+	}
+
+	fmt.Println(len(prStats))
+	fmt.Println(prStats[0])
 }

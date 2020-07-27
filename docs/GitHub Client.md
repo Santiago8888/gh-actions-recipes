@@ -11,12 +11,12 @@
 ## RoadMap
 
 * Hello World Request. (Done)
-* Define Strategy to Retrieve Results. (Done)
+* Strategy to Retrieve Stats. (Done)
 * Connect to MongoDB Client.
 * Store Results to MongoDB.
-* Design CRON Pipeline to Fetch Results.
 * Draft Article from Insights.
-* Clean Data for Front-end.
+* Design Pipeline to Update Results.
+* Test Get Queries for the Front-end.
 * Authenticate request to GitHub API.
 
 ### User Stories
@@ -32,12 +32,12 @@
 ### Tasks
 
 * Define DB Model. (Done)
-* Fetch Closed PRs and Filter relevant Stats. ()
-    * Create Struct. ()
-    * Retrieve Stats. ()
-    * Compute Additionals. ()
-        * Handle time stamps. ()
-    * Instantiate Stats Object. ()
+* Fetch Closed PRs and Filter relevant Stats. (Done)
+    * Create Struct. (Done)
+    * Retrieve Stats. (Done)
+    * Compute Additionals. (Done)
+        * Handle time stamps. (Done)
+    * Instantiate Stats Object. (Done)
 * Store PR Stats on MongoDB. ()
 * Design GET Queries on Stitch Console. ()
 * Create PR and Document Front End Tasks. ()
