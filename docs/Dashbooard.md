@@ -3,7 +3,7 @@
 ## Features
 
 - [X] Ring Chart to highlight proportion of PR vs non-PR.
-- [ ] Stacked Chart to Compare multiple branches development time.
+- [X] Stacked Chart to Compare multiple branches development time.
 - [ ] Line progression to show history of commits.
 - [ ] Counters on total PRs over defined time intervals.
 - [ ] Apply this to other GitHub Repos.
@@ -50,3 +50,4 @@ Interesting projects:
 
 **Further Reading**: [RxJS in Action](www.manning.com/books/rxjs-in-action)
 
+**[Gauge Chart](https://swimlane.gitbook.io/ngx-charts/examples/gauge-chart)**
