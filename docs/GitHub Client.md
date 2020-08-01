@@ -79,4 +79,9 @@
 
 * [GitHub V3 Client](https://github.com/google/go-github)
 * [GraphQL Client](https://github.com/shurcooL/githubv4)
+
+**Cached Responses:**
 * [Sample PR Response](https://api.github.com/repos/cypress-io/cypress/pulls/8072)
+
+**Prooduct Release related:**
+* [Octoverse](https://octoverse.github.com/)
