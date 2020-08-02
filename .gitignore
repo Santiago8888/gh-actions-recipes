@@ -4,8 +4,7 @@
 api/api
 
 # Environment.
-db/.env
-db/upsert/.env
+.env
 
 # Provisional
 db/router
