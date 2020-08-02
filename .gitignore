@@ -1,1 +1,12 @@
 .vscode
+
+# Binaries.
+api/api
+
+# Environment.
+.env
+
+# Provisional
+db/router
+db/models
+db/middleware

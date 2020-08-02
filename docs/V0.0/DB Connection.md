@@ -1,0 +1,31 @@
+## Goals
+	- Connect to DB. (Done)
+    	- Revisit Article on Medium. (Done)
+		- Establish Connection. (Done)
+		- Hello World Query. (Done)
+	- Store PR Stats. (Done)
+		- Hello World Post Request. (Done)
+		- Ensamble both Scripts. (Done)
+		- Store first record. (Done)
+	- Seed data from Repos. ()
+		- Finalize Cypress Import (Done)
+		- Select Five to Ten Other Repos. ()
+		- Seed Data. ()
+	- Test Queries. ()
+	- Highlight Article. ()
+
+### Debt
+	- Change Insert for Upsert, based on PR Number. ()
+	- Implement counter on query. ()
+
+### Selected Repositories
+1. [VS Code](https://github.com/microsoft/vscode)
+2. [Azure Docs](https://github.com/MicrosoftDocs/azure-docs)
+3. [Flutter](https://github.com/flutter/flutter)
+4. [First Contributions](https://github.com/firstcontributions/first-contributions)
+5. [TensorFlow](https://github.com/tensorflow/tensorflow)
+6. [React Native](https://github.com/facebook/react-native)
+7. [Kubernetes](https://github.com/kubernetes/kubernetes)
+8. [Definitely Typed](https://github.com/DefinitelyTyped/DefinitelyTyped)
+9. [Ansible](https://github.com/ansible/ansible)
+10. [Home Assistant](https://github.com/home-assistant/core)

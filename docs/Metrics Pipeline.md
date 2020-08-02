@@ -19,7 +19,7 @@ Acceptance Tests:
 5. Write request on create branch. (Done)
 6. Write request on merge. (Done)
 7. Create issue on branch create. (Done)
-8. Request metrics on merge. ()
+8. Request metrics on merge. (Done)
 9. Write metrics on merge. (Done)
 10. Close issue on merge. (Done)
 

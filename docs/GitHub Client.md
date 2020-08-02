@@ -12,8 +12,8 @@
 
 * Hello World Request. (Done)
 * Strategy to Retrieve Stats. (Done)
-* Connect to MongoDB Client.
-* Store Results to MongoDB.
+* Connect to MongoDB Client. (Done)
+* Store Results to MongoDB. (Done)
 * Draft Article from Insights.
 * Design Pipeline to Update Results.
 * Test Get Queries for the Front-end.
@@ -79,4 +79,9 @@
 
 * [GitHub V3 Client](https://github.com/google/go-github)
 * [GraphQL Client](https://github.com/shurcooL/githubv4)
+
+**Cached Responses:**
 * [Sample PR Response](https://api.github.com/repos/cypress-io/cypress/pulls/8072)
+
+**Prooduct Release related:**
+* [Octoverse](https://octoverse.github.com/)
