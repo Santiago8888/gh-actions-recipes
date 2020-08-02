@@ -4,7 +4,7 @@
 Right Side: 1 to 10 woith colored rangebars.
 Click to switch between repos.
 
-## Gauges
+### Gauges
 1. % of PR accepted.
 2. Average time to approve.
 3. Size of PRs (Additions + Deletions, Files, Additions, Commits & Deletions)
@@ -20,7 +20,7 @@ On the right options:
 * Files
 * Comments + Review Comments (Stacked).
 
-## BenchMark
+### BenchMark
 Scatter - Individual and by Repository.
 On Individual Color indicates open or closed.
 
@@ -33,14 +33,30 @@ Files vs Comments
 
 Heatmap, TreeMaps, PieCharts
 
-## TimeSeries
+### TimeSeries
 
 Rolling Averages by Time. Also on changes (commits, comments, files, etc)
 
-## Agility Score
+### Agility Score
 25% Acceptance
 25% Velocity
 25% Change
 25% Code Review
 
 Implement a gradient that ponders the rate of change as percent of comparisson.
+
+
+
+
+## Media
+Grab inspiration from other Rankings, Mckinsey, StackOverflow, Octoverse, Forbes.
+
+Motivation and brief description of some of the repos.
+
+Most interesting findings. How this applies to your enterprise.
+
+Obvious good patterns, the success among the success.
+
+Why an Agility score is relevant, is it possible?
+
+Describe next steps, areas of cross-interest and a personal reflection.
