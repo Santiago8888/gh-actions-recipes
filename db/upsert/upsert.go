@@ -31,32 +31,32 @@ var collection *mongo.Collection
 
 type PrStat struct {
 	// Repo Id
-	Owner      string `json:"owner,omitempty"`
-	Repository string `json:"repository,omitempty"`
+	Owner      string `bson:"owner"`
+	Repository string `bson:"repository"`
 
 	// PR Metadata
-	Number              int       `json:"number"`
-	State               string    `json:"state"`
-	Merged              bool      `json:"merged"`
-	Title               string    `json:"title"`
-	CreatedAt           time.Time `json:"created_at"`
-	ClosedAt            time.Time `json:"closed_at"`
-	AuthorAssociation   string    `json:"author_association"`
-	MaintainerCanModify bool      `json:"maintainer_can_modify"`
+	Number              int       `bson:"number"`
+	State               string    `bson:"state"`
+	Merged              bool      `bson:"merged"`
+	Title               string    `bson:"title"`
+	CreatedAt           time.Time `bson:"created_at"`
+	ClosedAt            time.Time `bson:"closed_at"`
+	AuthorAssociation   string    `bson:"author_association"`
+	MaintainerCanModify bool      `bson:"maintainer_can_modify"`
 
 	// PR Stats
-	AssigneesCount          int `json:"assignees_count"`
-	RequestedReviewersCount int `json:"requested_reviewers_count"`
-	Comments                int `json:"comments"`
-	ReviewComments          int `json:"review_comments"`
-	Commits                 int `json:"commits"`
-	Additions               int `json:"additions"`
-	Deletions               int `json:"deletions"`
-	ChangedFiles            int `json:"changed_files"`
+	AssigneesCount          int `bson:"assignees_count"`
+	RequestedReviewersCount int `bson:"requested_reviewers_count"`
+	Comments                int `bson:"comments"`
+	ReviewComments          int `bson:"review_comments"`
+	Commits                 int `bson:"commits"`
+	Additions               int `bson:"additions"`
+	Deletions               int `bson:"deletions"`
+	ChangedFiles            int `bson:"changed_files"`
 
 	// Computed Stats
-	TimeDiff  float64 `json:"time_diff"`
-	LinesDiff int     `json:"lines_diff"`
+	TimeDiff  float64 `bson:"time_diff"`
+	LinesDiff int     `bson:"lines_diff"`
 }
 
 func main() {
@@ -80,20 +80,26 @@ func main() {
 	fmt.Println("Connected to MongoDB!")
 	collection = db.Database(dbName).Collection(collName)
 
+	repo := "cypress"
+	cursor, err := collection.Find(context.TODO(), bson.D{primitive.E{Key: "repository", Value: repo}})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var results []PrStat
+	if err = cursor.All(context.TODO(), &results); err != nil {
+		log.Fatal(err)
+	}
+
 	gitCtx := context.Background()
 	client := github.NewClient(nil)
 
-	owner := "ansible"
-	repo := "ansible"
+	for _, result := range results {
+		pr, _, _ := client.PullRequests.Get(gitCtx, result.Owner, result.Repository, result.Number)
 
-	opt := &github.PullRequestListOptions{State: "closed"}
-	prs, _, _ := client.PullRequests.List(gitCtx, owner, repo, opt)
-
-	for _, pr := range prs {
 		var prDoc PrStat
-
-		prDoc.Repository = repo
-		prDoc.Owner = owner
+		prDoc.Repository = result.Owner
+		prDoc.Owner = result.Repository
 
 		prDoc.Number = pr.GetNumber()
 		prDoc.State = pr.GetState()
@@ -115,40 +121,10 @@ func main() {
 		prDoc.TimeDiff = prDoc.ClosedAt.Sub(prDoc.CreatedAt).Hours()
 		prDoc.LinesDiff = prDoc.Additions - prDoc.Deletions
 
-		insertPR(prDoc)
+		opts := options.FindOneAndUpdate().SetUpsert(true)
+		filter := bson.D{primitive.E{Key: "repository", Value: repo}, primitive.E{Key: "number", Value: pr.Number}}
+		update := bson.D{primitive.E{Key: "$set", Value: prDoc}}
+
+		collection.FindOneAndUpdate(context.TODO(), filter, update, opts)
 	}
-
-	cur, err := collection.Find(context.Background(), bson.D{{}})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var results []primitive.M
-	for cur.Next(context.Background()) {
-		var result bson.M
-		e := cur.Decode(&result)
-		if e != nil {
-			log.Fatal(e)
-		}
-
-		// fmt.Println("cur..>", cur, "result", reflect.TypeOf(result), reflect.TypeOf(result["_id"]))
-		results = append(results, result)
-	}
-
-	if err := cur.Err(); err != nil {
-		log.Fatal(err)
-	}
-
-	cur.Close(context.Background())
-	fmt.Println(len(results))
-}
-
-func insertPR(pr PrStat) {
-	insertResult, err := collection.InsertOne(context.Background(), pr)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Inserted a Single Record ", insertResult.InsertedID)
 }

@@ -5,6 +5,9 @@ api/api
 
 # Environment.
 db/.env
+db/upsert/.env
 
-# Provisional.
-db/**
+# Provisional
+db/router
+db/models
+db/middleware

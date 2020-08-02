@@ -12,8 +12,8 @@
 
 * Hello World Request. (Done)
 * Strategy to Retrieve Stats. (Done)
-* Connect to MongoDB Client.
-* Store Results to MongoDB.
+* Connect to MongoDB Client. (Done)
+* Store Results to MongoDB. (Done)
 * Draft Article from Insights.
 * Design Pipeline to Update Results.
 * Test Get Queries for the Front-end.
