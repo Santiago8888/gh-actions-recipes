@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/oauth2"
 
 	"github.com/google/go-github/github"
 	"github.com/joho/godotenv"
@@ -66,7 +67,6 @@ func main() {
 	}
 
 	pwd := os.Getenv("MONGO_PWD")
-	fmt.Println(pwd)
 	connectionString := prefix + ":" + pwd + "@" + cluster + "/" + dbName + "?" + config
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -91,17 +91,30 @@ func main() {
 		log.Fatal(err)
 	}
 
-	gitCtx := context.Background()
-	client := github.NewClient(nil)
+	loadErr := godotenv.Load()
+	if loadErr != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-	for _, result := range results {
+	token := os.Getenv("GIT_TOKEN")
+
+	gitCtx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+
+	tc := oauth2.NewClient(gitCtx, ts)
+	client := github.NewClient(tc)
+
+	for i, result := range results {
+		fmt.Println(i)
 		pr, _, _ := client.PullRequests.Get(gitCtx, result.Owner, result.Repository, result.Number)
 
 		var prDoc PrStat
-		prDoc.Repository = result.Owner
-		prDoc.Owner = result.Repository
+		prDoc.Repository = result.Repository
+		prDoc.Owner = result.Owner
 
-		prDoc.Number = pr.GetNumber()
+		prDoc.Number = result.Number
 		prDoc.State = pr.GetState()
 		prDoc.Merged = pr.GetMerged()
 		prDoc.Title = pr.GetTitle()
@@ -117,6 +130,7 @@ func main() {
 		prDoc.Commits = pr.GetCommits()
 		prDoc.Additions = pr.GetAdditions()
 		prDoc.Deletions = pr.GetDeletions()
+		prDoc.ChangedFiles = pr.GetChangedFiles()
 
 		prDoc.TimeDiff = prDoc.ClosedAt.Sub(prDoc.CreatedAt).Hours()
 		prDoc.LinesDiff = prDoc.Additions - prDoc.Deletions
