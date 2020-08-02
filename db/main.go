@@ -24,9 +24,15 @@ const shard_2 = "cluster0-shard-00-02-8pgr7.mongodb.net:27017"
 const cluster = shard_0 + shard_1 + shard_2
 
 const config = "ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority"
-const collName = "metrics"
+const collName = "stats"
 
 var collection *mongo.Collection
+
+type ToDoList struct {
+	ID     primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Author string             `json:"task,omitempty"`
+	Branch string             `json:"status,omitempty"`
+}
 
 func main() {
 	err := godotenv.Load()
@@ -72,4 +78,20 @@ func main() {
 
 	cur.Close(context.Background())
 	fmt.Println(results)
+
+	task := ToDoList{}
+	task.Author = "Hello"
+	task.Branch = "World"
+	insertOneTask(task)
+
+}
+
+func insertOneTask(task ToDoList) {
+	insertResult, err := collection.InsertOne(context.Background(), task)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Inserted a Single Record ", insertResult.InsertedID)
 }
