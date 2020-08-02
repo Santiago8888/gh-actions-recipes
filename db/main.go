@@ -12,6 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
+	"github.com/google/go-github/github"
 	"github.com/joho/godotenv"
 )
 
@@ -28,10 +29,34 @@ const collName = "stats"
 
 var collection *mongo.Collection
 
-type ToDoList struct {
-	ID     primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Author string             `json:"task,omitempty"`
-	Branch string             `json:"status,omitempty"`
+type PrStat struct {
+	// Repo Id
+	Owner      string `json:"owner,omitempty"`
+	Repository string `json:"repository,omitempty"`
+
+	// PR Metadata
+	Number              int       `json:"number,omitempty"`
+	State               string    `json:"state,omitempty"`
+	Merged              bool      `json:"merged,omitempty"`
+	Title               string    `json:"title,omitempty"`
+	CreatedAt           time.Time `json:"created_at,omitempty"`
+	ClosedAt            time.Time `json:"closed_at,omitempty"`
+	AuthorAssociation   string    `json:"author_association,omitempty"`
+	MaintainerCanModify bool      `json:"maintainer_can_modify,omitempty"`
+
+	// PR Stats
+	AssigneesCount          int `json:"assignees_count,omitempty"`
+	RequestedReviewersCount int `json:"requested_reviewers_count,omitempty"`
+	Comments                int `json:"comments,omitempty"`
+	ReviewComments          int `json:"review_comments,omitempty"`
+	Commits                 int `json:"commits,omitempty"`
+	Additions               int `json:"additions,omitempty"`
+	Deletions               int `json:"deletions,omitempty"`
+	ChangedFiles            int `json:"changed_files,omitempty"`
+
+	// Computed Stats
+	TimeDiff  float64 `json:"time_diff,omitempty"`
+	LinesDiff int     `json:"lines_diff,omitempty"`
 }
 
 func main() {
@@ -54,6 +79,45 @@ func main() {
 
 	fmt.Println("Connected to MongoDB!")
 	collection = db.Database(dbName).Collection(collName)
+
+	gitCtx := context.Background()
+	client := github.NewClient(nil)
+
+	owner := "cypress-io"
+	repo := "cypress"
+
+	opt := &github.PullRequestListOptions{State: "closed"}
+	prs, _, _ := client.PullRequests.List(gitCtx, owner, repo, opt)
+
+	for _, pr := range prs {
+		var prDoc PrStat
+
+		prDoc.Repository = repo
+		prDoc.Owner = owner
+
+		prDoc.Number = pr.GetNumber()
+		prDoc.State = pr.GetState()
+		prDoc.Merged = pr.GetMerged()
+		prDoc.Title = pr.GetTitle()
+		prDoc.CreatedAt = pr.GetCreatedAt()
+		prDoc.ClosedAt = pr.GetClosedAt()
+		prDoc.AuthorAssociation = pr.GetAuthorAssociation()
+		prDoc.MaintainerCanModify = pr.GetMaintainerCanModify()
+
+		prDoc.AssigneesCount = len(pr.Assignees)
+		prDoc.RequestedReviewersCount = len(pr.RequestedReviewers)
+		prDoc.Comments = pr.GetComments()
+		prDoc.ReviewComments = pr.GetReviewComments()
+		prDoc.Commits = pr.GetCommits()
+		prDoc.Additions = pr.GetAdditions()
+		prDoc.Deletions = pr.GetDeletions()
+
+		prDoc.TimeDiff = prDoc.ClosedAt.Sub(prDoc.CreatedAt).Hours()
+		prDoc.LinesDiff = prDoc.Additions - prDoc.Deletions
+
+		fmt.Println(prDoc)
+		insertPR(prDoc)
+	}
 
 	cur, err := collection.Find(context.Background(), bson.D{{}})
 	if err != nil {
@@ -78,16 +142,10 @@ func main() {
 
 	cur.Close(context.Background())
 	fmt.Println(results)
-
-	task := ToDoList{}
-	task.Author = "Hello"
-	task.Branch = "World"
-	insertOneTask(task)
-
 }
 
-func insertOneTask(task ToDoList) {
-	insertResult, err := collection.InsertOne(context.Background(), task)
+func insertPR(pr PrStat) {
+	insertResult, err := collection.InsertOne(context.Background(), pr)
 
 	if err != nil {
 		log.Fatal(err)
