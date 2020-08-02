@@ -83,8 +83,8 @@ func main() {
 	gitCtx := context.Background()
 	client := github.NewClient(nil)
 
-	owner := "cypress-io"
-	repo := "cypress"
+	owner := "kubernetes"
+	repo := "kubernetes"
 
 	opt := &github.PullRequestListOptions{State: "closed"}
 	prs, _, _ := client.PullRequests.List(gitCtx, owner, repo, opt)
@@ -115,7 +115,7 @@ func main() {
 		prDoc.TimeDiff = prDoc.ClosedAt.Sub(prDoc.CreatedAt).Hours()
 		prDoc.LinesDiff = prDoc.Additions - prDoc.Deletions
 
-		fmt.Println(prDoc)
+		// fmt.Println(prDoc)
 		insertPR(prDoc)
 	}
 
@@ -141,7 +141,7 @@ func main() {
 	}
 
 	cur.Close(context.Background())
-	fmt.Println(results)
+	fmt.Println(len(results))
 }
 
 func insertPR(pr PrStat) {
