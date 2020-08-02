@@ -1,4 +1,10 @@
 .vscode
 
-# Binaries
+# Binaries.
 api/api
+
+# Environment.
+db/.env
+
+# Provisional.
+db/**
